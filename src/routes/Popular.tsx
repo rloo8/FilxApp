@@ -1,0 +1,84 @@
+import { useQuery } from "react-query";
+import { IAPIResponse, getPopular, makeImagePath } from "../api";
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import MovieDetail from "../components/MovieDetail";
+
+//styled-components
+const Loading = styled.div`
+  height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Wrapper = styled.ul`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+`;
+const Box = styled(motion.li)`
+  height: 300px;
+  text-align: center;
+  span {
+    color: ${(props) => props.theme.white};
+    font-weight: 600;
+  }
+`;
+const Img = styled(motion.img)`
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+// variants
+const ImgVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.1,
+    y: -15,
+  },
+};
+
+function Popular() {
+  const { data: movieList, isLoading: movieLoading } = useQuery<IAPIResponse>(
+    ["movieList", "popular"],
+    getPopular
+  );
+
+  const navigate = useNavigate();
+  const onBoxClicked = (id: number) => {
+    navigate(`/${id}`);
+  };
+
+  return (
+    <>
+      {movieLoading ? (
+        <Loading>Loading...</Loading>
+      ) : (
+        <Wrapper>
+          {movieList?.results.map((movie) => (
+            <Box key={movie.id}>
+              <Img
+                src={makeImagePath(movie.poster_path)}
+                alt={movie.title}
+                variants={ImgVariants}
+                initial="normal"
+                whileHover="hover"
+                transition={{ type: "tween" }}
+                onClick={() => onBoxClicked(movie.id)}
+              />
+              <span>{movie.title}</span>
+            </Box>
+          ))}
+        </Wrapper>
+      )}
+      <MovieDetail />
+    </>
+  );
+}
+
+export default Popular;
