@@ -5,7 +5,6 @@ import { ThemeProvider, createGlobalStyle } from "styled-components";
 import { theme } from "./theme";
 import { RecoilRoot } from "recoil";
 import App from "./App";
-import { ReactQueryDevtools } from "react-query/devtools";
 
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
@@ -88,7 +87,6 @@ root.render(
         <ThemeProvider theme={theme}>
           <GlobalStyle />
           <App />
-          <ReactQueryDevtools initialIsOpen={true} />
         </ThemeProvider>
       </QueryClientProvider>
     </RecoilRoot>

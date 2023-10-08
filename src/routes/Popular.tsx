@@ -12,7 +12,7 @@ const Loading = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const Wrapper = styled.ul`
+const Wrapper = styled(motion.ul)`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -33,6 +33,28 @@ const Img = styled(motion.img)`
 `;
 
 // variants
+const WrapperVariants = {
+  start: {},
+  end: {
+    transition: {
+      type: "spring",
+      bounce: 0.5,
+      duration: 1,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const BoxVariants = {
+  start: {
+    opacity: 0,
+    y: 10,
+  },
+  end: {
+    opacity: 1,
+    y: 0,
+  },
+};
 const ImgVariants = {
   normal: {
     scale: 1,
@@ -51,7 +73,7 @@ function Popular() {
 
   const navigate = useNavigate();
   const onBoxClicked = (id: number) => {
-    navigate(`/${id}`);
+    navigate(`movie/${id}`);
   };
 
   return (
@@ -59,9 +81,9 @@ function Popular() {
       {movieLoading ? (
         <Loading>Loading...</Loading>
       ) : (
-        <Wrapper>
+        <Wrapper variants={WrapperVariants} initial="start" animate="end">
           {movieList?.results.map((movie) => (
-            <Box key={movie.id}>
+            <Box key={movie.id} layoutId={movie.id + ""} variants={BoxVariants}>
               <Img
                 src={makeImagePath(movie.poster_path)}
                 alt={movie.title}

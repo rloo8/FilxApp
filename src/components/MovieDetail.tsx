@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { IMovieDetail, getMovie, makeImagePath } from "../api";
+import { IMovieDetail, getMovie, makeBgPath } from "../api";
 import { useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { motion } from "framer-motion";
@@ -22,8 +22,8 @@ const DetailBox = styled(motion.div)`
   left: 0;
   right: 0;
   margin: auto;
-  width: 80vw;
-  height: 80vh;
+  max-width: 500px;
+  height: 90vh;
   background-color: ${(props) => props.theme.black};
   color: ${(props) => props.theme.white};
   border-radius: 15px;
@@ -38,6 +38,14 @@ const DetailBox = styled(motion.div)`
     padding: 20px;
   }
 `;
+const CloseBtn = styled.svg`
+  width: 35px;
+  top: 15px;
+  right: 15px;
+  position: absolute;
+  cursor: pointer;
+`;
+const Info = styled.div``;
 const Title = styled.span`
   font-size: 30px;
   font-weight: 600;
@@ -55,24 +63,39 @@ function MovieDetail() {
   );
 
   const navigate = useNavigate();
-  const onOverlayClicked = () => navigate("/");
+  const onClosedClicked = () => navigate(-1);
 
-  const movieDetailMatch = useMatch("/:id");
+  const PopularMatch = useMatch("movie/:id");
+  const NowMatch = useMatch("now/movie/:id");
+  const SoonMatch = useMatch("soon/movie/:id");
 
   return (
     <div>
-      {movieDetailMatch ? (
+      {PopularMatch || SoonMatch || NowMatch ? (
         <>
-          <Overlay onClick={onOverlayClicked} />
-          <DetailBox>
-            <img src={makeImagePath(movieDetailList?.backdrop_path + "")} />
-            <div>
+          <Overlay onClick={onClosedClicked} />
+          <DetailBox layoutId={id}>
+            <img src={makeBgPath(movieDetailList?.backdrop_path + "")} />
+            <CloseBtn
+              onClick={onClosedClicked}
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                clipRule="evenodd"
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+              ></path>
+            </CloseBtn>
+            <Info>
               <Title>{movieDetailList?.title}</Title>
               <Overview>{movieDetailList?.overview}</Overview>
               <span>Budget: ${movieDetailList?.budget}</span>
               <span>Revenue: ${movieDetailList?.revenue}</span>
               <span>Runtime: {movieDetailList?.runtime} minutes</span>
-            </div>
+            </Info>
           </DetailBox>
         </>
       ) : null}
